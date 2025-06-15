@@ -16,6 +16,12 @@
   --color-icon_blue:#3b82f5;
   --color-text_gray:#6b7380;
   --color-bg_blue:#f0f6ff;
+  --color-card_gray:#f3f4f6;
+  --color-text-black:#101828;
+  --color-day_gray:#6a7282;
+  --color-temp_gray:#1e2939;
+  --color-trend_gray:#364153;
+  --color-wcard_gray:#f9fafb;
 }
 
 @media (prefers-color-scheme: dark) {

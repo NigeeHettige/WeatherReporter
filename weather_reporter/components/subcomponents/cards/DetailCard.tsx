@@ -1,3 +1,4 @@
+
 import React from "react";
 import Customicon from "../icons/Customicon";
 import Sunny from "../../../public/weather_images/sunny.png";
@@ -6,6 +7,7 @@ import { RefreshCcw } from "lucide-react";
 import { Droplets } from "lucide-react";
 import { Wind } from "lucide-react";
 import { Sun } from "lucide-react";
+import { getforecastWeather } from "@/utils/apihelper";
 function DetailCard() {
   const weatherStats = [
     {
@@ -24,6 +26,13 @@ function DetailCard() {
       value: "6",
     },
   ];
+
+  //Fetch weather data
+  const getWeatherdata = async()=>{
+    const response = getforecastWeather("Colombo");
+    console.log((await response));
+  }
+  getWeatherdata();
 
   return (
     <div className="px-6 py-5">
