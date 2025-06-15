@@ -5,7 +5,9 @@ urls:{
     GET_CURRENT_WEATHER_URL_RELATIVE:"/api/current",
 
     GET_FORECAST_WEATHER_URL:`${WEATHER_SERVICE_URL}/forecast.json`,
-    GET_FORECAST_WEATHER_URL_RELATIVE:"/api/forecast"
+    GET_FORECAST_WEATHER_URL_RELATIVE:"/api/forecast",
+
+    GET_PLACES_URL_RELATIVE:"/api/places-autocomplete"
 }
 };
 export default config;

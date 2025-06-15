@@ -1,41 +1,37 @@
 import React from "react";
-import Sunny from "../../../public/weather_images/sunny.png";
 import Image from "next/image";
 import WeatherChart from "../charts/WeatherChart";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchWeather } from "@/store/weatherSlice";
+import { RootState, AppDispatch } from "../../../store/store";
+import { format, parseISO } from "date-fns";
 
 function Dayforecastcard() {
-  const forecastData = [
-    {
-      day: "Today",
-      description: "Cloudy",
-      temperature: "29° / 25°",
-      image: Sunny,
-    },
-    {
-      day: "Tomorrow",
-      description: "Sunny",
-      temperature: "31° / 26°",
-      image: Sunny,
-    },
-    {
-      day: "Wednesday",
-      description: "Rainy",
-      temperature: "28° / 24°",
-      image: Sunny,
-    },
-    {
-      day: "Thursday",
-      description: "Rainy",
-      temperature: "27° / 23°",
-      image: Sunny,
-    },
-    {
-      day: "Friday",
-      description: "Stormy",
-      temperature: "26° / 22°",
-      image: Sunny,
-    },
-  ];
+
+  const dispatch = useDispatch<AppDispatch>();
+  const weather = useSelector((state: RootState) => state.weather.data);
+  const loading = useSelector((state: RootState) => state.weather.loading);
+  const error = useSelector((state: RootState) => state.weather.error);
+
+  const city = "";
+  useEffect(() => {
+    dispatch(fetchWeather(city));
+  }, [city, dispatch]);
+
+  const day = weather?.forecast.forecastday || [];
+
+
+  const forecastData = day.map((dayData) => {
+    return {
+      day: format(parseISO(dayData.date), "EEEE"),
+      description: dayData.day.condition.text,
+      temperature: `${Math.round(dayData.day.mintemp_c)}°/${Math.round(
+        dayData.day.maxtemp_c
+      )}°`,
+      image: `https:${dayData.day.condition.icon}`,
+    };
+  });
 
   return (
     <div className="px-6 py-5">

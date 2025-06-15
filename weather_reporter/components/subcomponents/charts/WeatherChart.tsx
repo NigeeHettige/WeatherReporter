@@ -1,6 +1,6 @@
-"use client";
 
-import React, { useEffect, useRef } from "react";
+
+import React, { useEffect, useRef ,useMemo} from "react";
 import * as echarts from "echarts/core";
 import { LineChart } from "echarts/charts";
 import {
@@ -12,7 +12,11 @@ import {
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
 import { EChartsOption } from "echarts";
-
+import { useDispatch, useSelector } from "react-redux";
+import { fetchWeather } from "@/store/weatherSlice";
+import { RootState, AppDispatch } from "../../../store/store";
+import { ForecastDayContent } from "@/utils/types/interface";
+import { format, parseISO } from "date-fns";
 echarts.use([
   TitleComponent,
   TooltipComponent,
@@ -24,13 +28,42 @@ echarts.use([
 ]);
 
 const WeatherChart = () => {
+    const dispatch = useDispatch<AppDispatch>();
+  const weather = useSelector((state: RootState) => state.weather.data);
+  const loading = useSelector((state: RootState) => state.weather.loading);
+  const error = useSelector((state: RootState) => state.weather.error);
+
+  const city = "";
+  useEffect(() => {
+    dispatch(fetchWeather(city));
+  }, [city, dispatch]);
+
+  const day = weather?.forecast.forecastday || [];
+const forecastData: ForecastDayContent[] = day.map((dayData) => ({
+  date: format(parseISO(dayData.date), "EEEE"),
+  minTemp: Math.round(dayData.day.mintemp_c),  
+  maxTemp: Math.round(dayData.day.maxtemp_c),  
+  maxWind: Math.round(dayData.day.maxwind_kph) 
+}));
+
+const dayNames = forecastData.map(day => day.date);
+const mintemp = forecastData.map(day=>day.minTemp);
+const maxtemp = forecastData.map(day=>day.maxTemp);
+const maxWind = forecastData.map(day=>day.maxWind);
+const shortDayNames = dayNames.map(name => name.substring(0, 3));
+
+const chartDeps = useMemo(() => ({
+  labels: shortDayNames,
+  max: maxtemp,
+  min: mintemp,
+  wind: maxWind
+}), [shortDayNames, maxtemp, mintemp, maxWind]);
+
   const chartRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (chartRef.current) {
+    if (chartRef.current && shortDayNames.length > 0) {
       const myChart = echarts.init(chartRef.current);
-
-      // Determine if the screen is small (e.g., less than 640px)
       const isSmallScreen = window.innerWidth < 640;
 
       const option: EChartsOption = {
@@ -76,7 +109,7 @@ const WeatherChart = () => {
         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: ["Today", "Tomorrow", "Wed", "Thu", "Fri"],
+          data: shortDayNames,
           axisLabel: {
             color: "#374151",
             fontSize: 12,
@@ -113,7 +146,7 @@ const WeatherChart = () => {
           {
             name: "Max Temp",
             type: "line",
-            data: [29, 31, 28, 27, 26],
+            data: maxtemp,
             lineStyle: { color: "#f87171", width: 2 },
             itemStyle: { color: "#f87171" },
             smooth: true,
@@ -121,7 +154,7 @@ const WeatherChart = () => {
           {
             name: "Min Temp",
             type: "line",
-            data: [25, 26, 24, 23, 22],
+            data: mintemp,
             lineStyle: { color: "#3b82f6", width: 2 },
             itemStyle: { color: "#3b82f6" },
             smooth: true,
@@ -130,7 +163,7 @@ const WeatherChart = () => {
             name: "Wind Speed",
             type: "line",
             yAxisIndex: 1,
-            data: [10, 12, 15, 8, 20],
+            data: maxWind,
             lineStyle: { color: "#10b981", width: 2 },
             itemStyle: { color: "#10b981" },
             smooth: true,
@@ -158,7 +191,7 @@ const WeatherChart = () => {
         myChart.dispose();
       };
     }
-  }, []);
+  }, [chartDeps]);
 
   return (
    

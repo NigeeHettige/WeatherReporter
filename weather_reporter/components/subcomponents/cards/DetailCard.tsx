@@ -1,38 +1,68 @@
-
 import React from "react";
 import Customicon from "../icons/Customicon";
-import Sunny from "../../../public/weather_images/sunny.png";
 import Image from "next/image";
 import { RefreshCcw } from "lucide-react";
 import { Droplets } from "lucide-react";
 import { Wind } from "lucide-react";
 import { Sun } from "lucide-react";
-import { getforecastWeather } from "@/utils/apihelper";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCurrentWeather } from "@/store/currentWeatherslice";
+import { RootState, AppDispatch } from "../../../store/store";
+
 function DetailCard() {
+  const dispatch = useDispatch<AppDispatch>();
+  const currentweather = useSelector(
+    (state: RootState) => state.currentweather.data
+  );
+  const loading = useSelector(
+    (state: RootState) => state.currentweather.loading
+  );
+  const error = useSelector((state: RootState) => state.currentweather.error);
+
+  const city = "";
+  useEffect(() => {
+    dispatch(fetchCurrentWeather(city));
+  }, [city, dispatch]);
+
+  const humidity = currentweather?.current.humidity;
+  const wind = currentweather?.current.wind_kph || 0;
+  const uv = currentweather?.current.uv;
+  const text = currentweather?.current.condition.text || "Weather condition";
+  const url_image = currentweather?.current.condition.icon
+    ? `https:${currentweather.current.condition.icon}`
+    : "/default-weather-icon.png";
+  const place = currentweather?.location.name;
+  const country = currentweather?.location.country;
+  const updated_time = currentweather?.current.last_updated;
+  const period = currentweather?.current.is_day == 0 ? "PM" : "AM";
+  const up_time = `${updated_time} ${period}`;
+  const temperature = Math.round(currentweather?.current.temp_c || 0);
+  const feel_temperature = Math.round(currentweather?.current.feelslike_c || 0);
   const weatherStats = [
     {
       icon: Droplets,
       label: "Humidity",
-      value: "79%",
+      value: humidity,
     },
     {
       icon: Wind,
       label: "Wind",
-      value: "13 km/h",
+      value: `${wind} km/h`,
     },
     {
       icon: Sun,
       label: "UV Index",
-      value: "6",
+      value: uv,
     },
   ];
 
-  //Fetch weather data
-  const getWeatherdata = async()=>{
-    const response = getforecastWeather("Colombo");
-    console.log((await response));
-  }
-  getWeatherdata();
+  // const getplaces = async () => {
+  //   const response = await getPlacePrediction("Colmbo");
+  //   console.log("Predicted ones---->", response);
+  // };
+  // getplaces();
+
 
   return (
     <div className="px-6 py-5">
@@ -42,31 +72,38 @@ function DetailCard() {
             <div className="flex flex-col">
               <div className="flex gap-3 items-center">
                 <div className="flex flex-col">
-                  <p className="text-3xl font-bold">Colombo</p>
-                  <p className="text-sm font-extralight">
-                    6/14/2025, 7:13:44 PM
-                  </p>
+                  <p className="text-3xl font-bold">{place}</p>
+                  <p className="text-sm font-extralight">{up_time}</p>
                 </div>
                 <button className="bg-light_blue rounded-full px-2 py-0.5 text-blue md:text-sm text-xm">
-                  Sri Lanka
+                  {country}
                 </button>
                 <RefreshCcw />
               </div>
             </div>
 
             <div className="flex gap-4 items-center">
-              <Image alt="sunny" src={Sunny} />
-              <p className="text-lg">Partly cloudy</p>
+              <Image
+                alt={text}
+                src={url_image}
+                width={40}
+                height={40}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src =
+                    "/default-weather-icon.png";
+                }}
+              />
+              <p className="text-lg">{text}</p>
             </div>
           </div>
           <div className="flex md:justify-between flex-col md:flex-row  mt-5 gap-2 items-center">
             <div className="flex gap-3">
-              <p className="text-7xl font-bold">30°C</p>
+              <p className="text-7xl font-bold">{temperature}°C</p>
               <div className="flex flex-col gap-1">
                 <p className="text-text_gray text-sm font-extralight">
                   Feels like
                 </p>
-                <p>34°C</p>
+                <p>{feel_temperature}°C</p>
               </div>
             </div>
             <div className="flex gap-4">

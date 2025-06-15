@@ -1,6 +1,6 @@
 import React from "react";
 
-import { CustomIconProps } from "@/utils/interface";
+import { CustomIconProps } from "@/utils/types/interface";
 function Customicon({ icon: Icon }: CustomIconProps) {
   return (
     <div className="bg-light_blue rounded-full w-10 h-10 flex items-center justify-center">

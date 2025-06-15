@@ -1,6 +1,6 @@
 import React from "react";
 import Customicon from "../icons/Customicon";
-import { WeatherCardProps } from "@/utils/interface";
+import { WeatherCardProps } from "@/utils/types/interface";
 
 function Weathercard({subtitle,content,title,icon}:WeatherCardProps) {
   return (
