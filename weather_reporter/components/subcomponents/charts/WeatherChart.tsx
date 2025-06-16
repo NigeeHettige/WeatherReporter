@@ -1,6 +1,4 @@
-
-
-import React, { useEffect, useRef ,useMemo} from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import * as echarts from "echarts/core";
 import { LineChart } from "echarts/charts";
 import {
@@ -17,6 +15,7 @@ import { fetchWeather } from "@/store/weatherSlice";
 import { RootState, AppDispatch } from "../../../store/store";
 import { ForecastDayContent } from "@/utils/types/interface";
 import { format, parseISO } from "date-fns";
+import { AxisTooltipParam } from "@/utils/types/interface";
 echarts.use([
   TitleComponent,
   TooltipComponent,
@@ -28,7 +27,7 @@ echarts.use([
 ]);
 
 const WeatherChart = () => {
-    const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
   const weather = useSelector((state: RootState) => state.weather.data);
   const loading = useSelector((state: RootState) => state.weather.loading);
   const error = useSelector((state: RootState) => state.weather.error);
@@ -39,25 +38,28 @@ const WeatherChart = () => {
   }, [city, dispatch]);
 
   const day = weather?.forecast.forecastday || [];
-const forecastData: ForecastDayContent[] = day.map((dayData) => ({
-  date: format(parseISO(dayData.date), "EEEE"),
-  minTemp: Math.round(dayData.day.mintemp_c),  
-  maxTemp: Math.round(dayData.day.maxtemp_c),  
-  maxWind: Math.round(dayData.day.maxwind_kph) 
-}));
+  const forecastData: ForecastDayContent[] = day.map((dayData) => ({
+    date: format(parseISO(dayData.date), "EEEE"),
+    minTemp: Math.round(dayData.day.mintemp_c),
+    maxTemp: Math.round(dayData.day.maxtemp_c),
+    maxWind: Math.round(dayData.day.maxwind_kph),
+  }));
 
-const dayNames = forecastData.map(day => day.date);
-const mintemp = forecastData.map(day=>day.minTemp);
-const maxtemp = forecastData.map(day=>day.maxTemp);
-const maxWind = forecastData.map(day=>day.maxWind);
-const shortDayNames = dayNames.map(name => name.substring(0, 3));
+  const dayNames = forecastData.map((day) => day.date);
+  const mintemp = forecastData.map((day) => day.minTemp);
+  const maxtemp = forecastData.map((day) => day.maxTemp);
+  const maxWind = forecastData.map((day) => day.maxWind);
+  const shortDayNames = dayNames.map((name) => name.substring(0, 3));
 
-const chartDeps = useMemo(() => ({
-  labels: shortDayNames,
-  max: maxtemp,
-  min: mintemp,
-  wind: maxWind
-}), [shortDayNames, maxtemp, mintemp, maxWind]);
+  const chartDeps = useMemo(
+    () => ({
+      labels: shortDayNames,
+      max: maxtemp,
+      min: mintemp,
+      wind: maxWind,
+    }),
+    [shortDayNames, maxtemp, mintemp, maxWind]
+  );
 
   const chartRef = useRef<HTMLDivElement>(null);
 
@@ -79,8 +81,8 @@ const chartDeps = useMemo(() => ({
         },
         tooltip: {
           trigger: "axis",
-          formatter: (params: any) => {
-            const [max, min, wind] = params;
+          formatter: (params: unknown) => {
+               const [max, min, wind] = params as AxisTooltipParam[];
             return `
               <div style="padding: 8px;">
                 <strong>${max.axisValue}</strong><br/>
@@ -100,7 +102,7 @@ const chartDeps = useMemo(() => ({
           },
         },
         grid: {
-          left: isSmallScreen?"10%":"5%",
+          left: isSmallScreen ? "10%" : "5%",
           right: "5%",
           bottom: "5%",
           top: isSmallScreen ? "40%" : "15%",
@@ -194,12 +196,10 @@ const chartDeps = useMemo(() => ({
   }, [chartDeps]);
 
   return (
-   
-      <div
-        ref={chartRef}
-        className="w-full h-full min-h-[300px] sm:min-h-[400px]"
-      />
-  
+    <div
+      ref={chartRef}
+      className="w-full h-full min-h-[300px] sm:min-h-[400px]"
+    />
   );
 };
 

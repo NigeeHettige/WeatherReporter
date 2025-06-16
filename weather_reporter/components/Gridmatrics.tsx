@@ -22,7 +22,7 @@ function Gridmatrics() {
   }, [city, dispatch]);
 
   const wind = currentweather?.current.wind_dir || "";
-  const cloud = currentweather?.current.cloud || "";
+  const cloud = currentweather?.current.cloud || "0";
   const visibility = currentweather?.current.vis_km || "";
 
  

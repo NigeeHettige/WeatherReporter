@@ -1,6 +1,6 @@
 import { Client } from "@googlemaps/google-maps-services-js";
 import { NextRequest, NextResponse } from "next/server";
-import axios, { AxiosError } from "axios";
+import  { AxiosError } from "axios";
 
 export const GET = async (request: NextRequest) => {
   const query = request.nextUrl.searchParams.get("q");

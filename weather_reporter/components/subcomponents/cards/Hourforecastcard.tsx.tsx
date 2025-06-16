@@ -19,9 +19,14 @@ function Hourforecastcard() {
 
   const hour = weather?.forecast.forecastday[0].hour || [];
   
+  function getAmPm(timeString:string) {
+  const hour = new Date(timeString).getHours();
+  return hour < 12 ? 'AM' : 'PM';
+}
   const forecastData = hour?.map((hourData) => {
+  
     const timeStr = hourData.time.split(" ")[1];
-    const period = hourData.is_day == 0 ? "AM" : "PM";
+    const period = getAmPm(hourData.time);
     const timehour = `${timeStr}.${period}`;
     return {
       time: timehour,

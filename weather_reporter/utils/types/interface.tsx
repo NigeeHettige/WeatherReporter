@@ -140,3 +140,9 @@ export interface ForecastDayContent {
   maxTemp: number;
   maxWind: number;
 }
+
+export interface AxisTooltipParam {
+  axisValue: string;
+  data: number;
+  seriesName: string;
+};

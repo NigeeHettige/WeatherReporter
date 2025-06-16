@@ -9,20 +9,25 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrentWeather } from "@/store/currentWeatherslice";
 import { RootState, AppDispatch } from "../../../store/store";
+import { fetchWeather } from "@/store/weatherSlice";
+import DefaultImage from "../../../public/weather_images/default.png";
 
 function DetailCard() {
   const dispatch = useDispatch<AppDispatch>();
   const currentweather = useSelector(
     (state: RootState) => state.currentweather.data
   );
-  const loading = useSelector(
-    (state: RootState) => state.currentweather.loading
+  const { loading: loadingCurrent, error: errorCurrent } = useSelector(
+    (state: RootState) => state.currentweather
   );
-  const error = useSelector((state: RootState) => state.currentweather.error);
+  const { loading: loadingWeather, error: errorWeather } = useSelector(
+    (state: RootState) => state.weather
+  );
 
   const city = "";
   useEffect(() => {
     dispatch(fetchCurrentWeather(city));
+    dispatch(fetchWeather(city));
   }, [city, dispatch]);
 
   const humidity = currentweather?.current.humidity;
@@ -31,7 +36,7 @@ function DetailCard() {
   const text = currentweather?.current.condition.text || "Weather condition";
   const url_image = currentweather?.current.condition.icon
     ? `https:${currentweather.current.condition.icon}`
-    : "/default-weather-icon.png";
+    : DefaultImage;
   const place = currentweather?.location.name;
   const country = currentweather?.location.country;
   const updated_time = currentweather?.current.last_updated;
@@ -57,13 +62,6 @@ function DetailCard() {
     },
   ];
 
-  // const getplaces = async () => {
-  //   const response = await getPlacePrediction("Colmbo");
-  //   console.log("Predicted ones---->", response);
-  // };
-  // getplaces();
-
-
   return (
     <div className="px-6 py-5">
       <div className="bg-white shadow-sm w-full rounded-xl transform transition-all duration-300 hover:scale-[1.01] hover:shadow-lg">
@@ -78,7 +76,12 @@ function DetailCard() {
                 <button className="bg-light_blue rounded-full px-2 py-0.5 text-blue md:text-sm text-xm">
                   {country}
                 </button>
-                <RefreshCcw />
+                <RefreshCcw
+                  onClick={() => {
+                    dispatch(fetchCurrentWeather(city));
+                    dispatch(fetchWeather(city));
+                  }}
+                />
               </div>
             </div>
 
