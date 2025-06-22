@@ -10,7 +10,6 @@ export const GET = async (request: NextRequest) => {
       return new NextResponse("Access denied", { status: 401 });
     }
     const BASE_URL = `${config.urls.GET_FORECAST_WEATHER_URL}?key=${key}&days=5&q=${city}`;
-    console.log("External API URL:", BASE_URL);
     const response = await axios.get(BASE_URL);
     return new NextResponse(JSON.stringify(response.data), { status: 200 });
   } catch (error) {

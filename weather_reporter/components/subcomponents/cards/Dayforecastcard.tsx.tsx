@@ -6,13 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchWeather } from "@/store/weatherSlice";
 import { RootState, AppDispatch } from "../../../store/store";
 import { format, parseISO } from "date-fns";
+import { Loader } from "@/components/loadingComponents/Loader";
 
 function Dayforecastcard() {
-
   const dispatch = useDispatch<AppDispatch>();
   const weather = useSelector((state: RootState) => state.weather.data);
   const loading = useSelector((state: RootState) => state.weather.loading);
-  const error = useSelector((state: RootState) => state.weather.error);
+
 
   const city = "";
   useEffect(() => {
@@ -20,7 +20,6 @@ function Dayforecastcard() {
   }, [city, dispatch]);
 
   const day = weather?.forecast.forecastday || [];
-
 
   const forecastData = day.map((dayData) => {
     return {
@@ -42,30 +41,34 @@ function Dayforecastcard() {
           </h2>
         </div>
 
-        <div className="space-y-4">
-          {forecastData.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between bg-wcard_gray px-4 py-3 rounded-xl hover:bg-card_gray transition duration-200"
-            >
-              <div className="flex items-center gap-4">
-                <Image
-                  alt={item.description}
-                  src={item.image}
-                  width={40}
-                  height={40}
-                />
-                <div className="flex flex-col">
-                  <p className="text-text-black font-medium">{item.day}</p>
-                  <p className="text-sm text-day_gray">{item.description}</p>
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className="space-y-4">
+            {forecastData.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between bg-wcard_gray px-4 py-3 rounded-xl hover:bg-card_gray transition duration-200"
+              >
+                <div className="flex items-center gap-4">
+                  <Image
+                    alt={item.description}
+                    src={item.image}
+                    width={40}
+                    height={40}
+                  />
+                  <div className="flex flex-col">
+                    <p className="text-text-black font-medium">{item.day}</p>
+                    <p className="text-sm text-day_gray">{item.description}</p>
+                  </div>
                 </div>
+                <p className="text-lg font-semibold text-temp_gray">
+                  {item.temperature}
+                </p>
               </div>
-              <p className="text-lg font-semibold text-temp_gray">
-                {item.temperature}
-              </p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         <div className="mt-10">
           <h3 className="text-lg font-medium text-trend_gray mb-4 text-center">

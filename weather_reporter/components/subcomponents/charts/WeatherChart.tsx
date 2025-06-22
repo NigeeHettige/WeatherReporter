@@ -29,8 +29,7 @@ echarts.use([
 const WeatherChart = () => {
   const dispatch = useDispatch<AppDispatch>();
   const weather = useSelector((state: RootState) => state.weather.data);
-  const loading = useSelector((state: RootState) => state.weather.loading);
-  const error = useSelector((state: RootState) => state.weather.error);
+
 
   const city = "";
   useEffect(() => {
@@ -82,7 +81,7 @@ const WeatherChart = () => {
         tooltip: {
           trigger: "axis",
           formatter: (params: unknown) => {
-               const [max, min, wind] = params as AxisTooltipParam[];
+            const [max, min, wind] = params as AxisTooltipParam[];
             return `
               <div style="padding: 8px;">
                 <strong>${max.axisValue}</strong><br/>

@@ -12,16 +12,7 @@ export const getcurrentWeather = async (
     const response = await axios.get<WeatherResponse>(current_url);
     return response.data;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Weather API error:", {
-        message: error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-      });
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    throw new Error("Failed to fetch weather data");
+    throw error;
   }
 };
 
@@ -33,15 +24,6 @@ export const getforecastWeather = async (city: string) => {
     const response = await axios.get(current_url);
     return response.data;
   } catch (error: unknown) {
-    if (axios.isAxiosError(error)) {
-      console.error("Weather API error:", {
-        message: error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-      });
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    throw new Error("Failed to fetch forecast weather data");
+    throw error;
   }
 };

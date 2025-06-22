@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrentWeather } from "@/store/currentWeatherslice";
 import { RootState, AppDispatch } from "../store/store";
+import { DetailLoader } from "./loadingComponents/DetailLoader";
 
 function Gridmatrics() {
   const dispatch = useDispatch<AppDispatch>();
@@ -14,7 +15,6 @@ function Gridmatrics() {
   const loading = useSelector(
     (state: RootState) => state.currentweather.loading
   );
-  const error = useSelector((state: RootState) => state.currentweather.error);
 
   const city = "";
   useEffect(() => {
@@ -24,8 +24,6 @@ function Gridmatrics() {
   const wind = currentweather?.current.wind_dir || "";
   const cloud = currentweather?.current.cloud || "0";
   const visibility = currentweather?.current.vis_km || "";
-
- 
 
   const weatherCards = [
     {
@@ -49,15 +47,19 @@ function Gridmatrics() {
   ];
   return (
     <div className=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 px-6 py-5">
-      {weatherCards.map((card, index) => (
-        <Weathercard
-          key={index}
-          subtitle={card.subtitle}
-          content={card.content}
-          title={card.title}
-          icon={card.icon}
-        />
-      ))}
+      {weatherCards.map((card, index) =>
+        loading ? (
+          <DetailLoader key={`loader-${index}`} />
+        ) : (
+          <Weathercard
+            key={index}
+            subtitle={card.subtitle}
+            content={card.content}
+            title={card.title}
+            icon={card.icon}
+          />
+        )
+      )}
     </div>
   );
 }

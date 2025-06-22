@@ -30,7 +30,7 @@ interface Current {
   last_updated: string;
   temp_c: number;
   temp_f: number;
-  humidity:number;
+  humidity: number;
   condition: Condition;
   wind_kph: number;
   wind_degree: number;
@@ -40,7 +40,7 @@ interface Current {
   feelslike_f: number;
   vis_km: number;
   uv: number;
-  is_day:number;
+  is_day: number;
 }
 
 export interface WeatherResponse {
@@ -145,4 +145,39 @@ export interface AxisTooltipParam {
   axisValue: string;
   data: number;
   seriesName: string;
-};
+}
+
+
+export interface WeatherApiError {
+  message: string;
+  status?: number;
+  data?: unknown;
+  isAxiosError: boolean;
+}
+
+
+interface MatchedSubstring{
+   length: number;
+  offset: number;
+}
+
+interface Term {
+  offset: number;
+  value: string;
+}
+
+interface StructuredFormatting {
+  main_text: string;
+  main_text_matched_substrings: MatchedSubstring[];
+  secondary_text: string;
+}
+
+export interface PlacePrediction {
+  description: string;
+  matched_substrings: MatchedSubstring[];
+  place_id: string;
+  reference: string;
+  structured_formatting: StructuredFormatting;
+  terms: Term[];
+  types: string[];
+}
