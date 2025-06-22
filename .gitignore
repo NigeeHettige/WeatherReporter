@@ -1,0 +1,30 @@
+# Node dependencies
+node_modules/
+weather_reporter/node_modules/
+
+# Vercel deployment settings
+.vercel/
+weather_reporter/.vercel/
+
+# Environment variables
+.env
+weather_reporter/.env
+
+# Build output
+.next/
+weather_reporter/.next/
+out/
+weather_reporter/out/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDE/editor files
+.vscode/
+.idea/
