@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,35 +11,40 @@ function Hourforecastcard() {
   const weather = useSelector((state: RootState) => state.weather.data);
   const loading = useSelector((state: RootState) => state.weather.loading);
 
-
   const city = "";
   useEffect(() => {
-    dispatch(fetchWeather(city));
+    const timer = setTimeout(() => {
+      dispatch(fetchWeather(city));
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, [city, dispatch]);
 
   const hour = weather?.forecast.forecastday[0].hour || [];
 
-  function getAmPm(timeString: string) {
+  const getAmPm = useCallback((timeString: string) => {
     const hour = new Date(timeString).getHours();
     return hour < 12 ? "AM" : "PM";
-  }
-  const forecastData = hour?.map((hourData) => {
-    const timeStr = hourData.time.split(" ")[1];
-    const period = getAmPm(hourData.time);
-    const timehour = `${timeStr}.${period}`;
-    return {
-      time: timehour,
-      description: hourData.condition.text,
-      temperature: `${Math.round(hourData.temp_c)}°`,
-      image: `https:${hourData.condition.icon}`,
-    };
-  });
+  }, []);
+  const forecastData = useMemo(() => {
+    return hour?.map((hourData) => {
+      const timeStr = hourData.time.split(" ")[1];
+      const period = getAmPm(hourData.time);
+      const timehour = `${timeStr}.${period}`;
+      return {
+        time: timehour,
+        description: hourData.condition.text,
+        temperature: `${Math.round(hourData.temp_c)}°`,
+        image: `https:${hourData.condition.icon}`,
+      };
+    });
+  }, [hour]);
 
   return (
     <div className="px-6 py-5">
       <div className="bg-white shadow-lg px-5 py-10 rounded-xl">
         <div className="w-full justify-start flex mb-5">
-          <p className="text-2xl font-medium">24-Hour Forecast</p>
+          <p className="text-2xl font-semibold">24-Hour Forecast</p>
         </div>
 
         {/* Horizontal Scroll Section */}
@@ -61,6 +66,8 @@ function Hourforecastcard() {
                   width={40}
                   height={40}
                   className="m-2"
+                  loading="lazy"
+                  unoptimized={false}
                 />
 
                 <p className="text-lg mt-1 font-semibold">{item.temperature}</p>

@@ -4,7 +4,7 @@ import { WeatherCardProps } from "@/utils/types/interface";
 
 function Weathercard({subtitle,content,title,icon}:WeatherCardProps) {
   return (
-    <div className="bg-white shadow-sm w-full  rounded-xl transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ">
+    <div className="bg-white shadow-sm w-full  rounded-xl transform transition-all duration-300 hover:scale-[1.02] hover:shadow-xl min-h-[120px]">
       <div className="flex flex-col gap-3 ml-5 px-3 py-5">
         <div className="flex gap-4">
           <Customicon icon={icon }/>

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Suspense, useMemo } from "react";
 import Image from "next/image";
-import WeatherChart from "../charts/WeatherChart";
+
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWeather } from "@/store/weatherSlice";
@@ -8,29 +8,39 @@ import { RootState, AppDispatch } from "../../../store/store";
 import { format, parseISO } from "date-fns";
 import { Loader } from "@/components/loadingComponents/Loader";
 
+const WeatherChart = React.lazy(() => import("../charts/WeatherChart"));
+
 function Dayforecastcard() {
   const dispatch = useDispatch<AppDispatch>();
   const weather = useSelector((state: RootState) => state.weather.data);
   const loading = useSelector((state: RootState) => state.weather.loading);
 
-
   const city = "";
   useEffect(() => {
-    dispatch(fetchWeather(city));
+    const fetchData = async () => {
+      try {
+        await dispatch(fetchWeather(city));
+      } catch (error) {
+        console.error("Failed to fetch weather:", error);
+      }
+    };
+
+    const timer = setTimeout(fetchData, 300);
+    return () => clearTimeout(timer);
   }, [city, dispatch]);
 
   const day = weather?.forecast.forecastday || [];
 
-  const forecastData = day.map((dayData) => {
-    return {
+  const forecastData = useMemo(() => {
+    return day.map((dayData) => ({
       day: format(parseISO(dayData.date), "EEEE"),
       description: dayData.day.condition.text,
       temperature: `${Math.round(dayData.day.mintemp_c)}°/${Math.round(
         dayData.day.maxtemp_c
       )}°`,
       image: `https:${dayData.day.condition.icon}`,
-    };
-  });
+    }));
+  }, [day]);
 
   return (
     <div className="px-6 py-5">
@@ -56,6 +66,8 @@ function Dayforecastcard() {
                     src={item.image}
                     width={40}
                     height={40}
+                    loading="lazy"
+                    unoptimized={false}
                   />
                   <div className="flex flex-col">
                     <p className="text-text-black font-medium">{item.day}</p>
@@ -75,7 +87,9 @@ function Dayforecastcard() {
             Temperature Trends
           </h3>
           <div className="flex justify-center">
-            <WeatherChart />
+            <Suspense>
+              <WeatherChart />
+            </Suspense>
           </div>
         </div>
       </div>

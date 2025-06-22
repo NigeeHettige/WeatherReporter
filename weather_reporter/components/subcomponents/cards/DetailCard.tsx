@@ -1,7 +1,7 @@
-import React from "react";
+import React, { Suspense, useMemo } from "react";
 import Customicon from "../icons/Customicon";
 import Image from "next/image";
-import { RefreshCcw } from "lucide-react";
+
 import { Droplets } from "lucide-react";
 import { Wind } from "lucide-react";
 import { Sun } from "lucide-react";
@@ -13,6 +13,10 @@ import { fetchWeather } from "@/store/weatherSlice";
 import DefaultImage from "../../../public/weather_images/default.png";
 import { DetailLoader } from "@/components/loadingComponents/DetailLoader";
 import { triggerResetSearch } from "@/store/currentWeatherslice";
+
+const RefreshCcw = React.lazy(() =>
+  import("lucide-react").then((mod) => ({ default: mod.RefreshCcw }))
+);
 
 function DetailCard() {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,9 +36,6 @@ function DetailCard() {
     dispatch(fetchWeather(city));
   }, [city, dispatch]);
 
-  const humidity = currentweather?.current.humidity;
-  const wind = currentweather?.current.wind_kph || 0;
-  const uv = currentweather?.current.uv;
   const text = currentweather?.current.condition.text || "Weather condition";
   const url_image = currentweather?.current.condition.icon
     ? `https:${currentweather.current.condition.icon}`
@@ -46,23 +47,38 @@ function DetailCard() {
   const up_time = `${updated_time} ${period}`;
   const temperature = Math.round(currentweather?.current.temp_c || 0);
   const feel_temperature = Math.round(currentweather?.current.feelslike_c || 0);
-  const weatherStats = [
-    {
-      icon: Droplets,
-      label: "Humidity",
-      value: humidity,
-    },
-    {
-      icon: Wind,
-      label: "Wind",
-      value: `${wind} km/h`,
-    },
-    {
-      icon: Sun,
-      label: "UV Index",
-      value: uv,
-    },
-  ];
+  const weatherStats = useMemo(
+    () => [
+      {
+        icon: Droplets,
+        label: "Humidity",
+        value: currentweather?.current.humidity || "--",
+      },
+      {
+        icon: Wind,
+        label: "Wind",
+        value: `${currentweather?.current.wind_kph || 0} km/h`,
+      },
+      {
+        icon: Sun,
+        label: "UV Index",
+        value: currentweather?.current.uv || "--",
+      },
+    ],
+    [currentweather]
+  );
+
+  const handleRefresh = useMemo(() => {
+    let timeout: NodeJS.Timeout;
+    return () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        dispatch(triggerResetSearch());
+        dispatch(fetchCurrentWeather(city));
+        dispatch(fetchWeather(city));
+      }, 300); // 300ms debounce
+    };
+  }, [dispatch, city]);
 
   return (
     <div className="px-6 py-5">
@@ -84,13 +100,12 @@ function DetailCard() {
                   {loadingWeather ? (
                     <DetailLoader />
                   ) : (
-                    <RefreshCcw
-                      onClick={() => {
-                        dispatch(triggerResetSearch());
-                        dispatch(fetchCurrentWeather(city));
-                        dispatch(fetchWeather(city));
-                      }}
-                    />
+                    <Suspense>
+                      <RefreshCcw
+                        onClick={handleRefresh}
+                        className="cursor-pointer hover:animate-spin"
+                      />
+                    </Suspense>
                   )}
                 </div>
               </div>

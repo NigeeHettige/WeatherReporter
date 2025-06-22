@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import React, { useEffect, useState, Suspense } from "react";
+
 import { getPlacePrediction } from "@/utils/services/locationservice";
 import useDebounce from "@/utils/hooks/useDebounce";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -11,9 +11,15 @@ import {
 import { fetchWeather } from "@/store/weatherSlice";
 import { RootState } from "@/store/store";
 import { getCache, setCache } from "@/utils/helpers/helper";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { PlacePrediction } from "@/utils/types/interface";
 
+const Search = React.lazy(() =>
+  import("lucide-react").then((mod) => ({ default: mod.Search }))
+);
+const Toaster = React.lazy(() =>
+  import("react-hot-toast").then((mod) => ({ default: mod.Toaster }))
+);
 function Searchbar() {
   const [query, setQuery] = useState("");
   const [predictions, setPredictions] = useState<string[]>([]);
@@ -123,7 +129,10 @@ function Searchbar() {
 
   return (
     <div className="flex justify-center mt-5 z-50">
-      <Toaster position="top-center" reverseOrder={false} gutter={8} />
+      <Suspense fallback={null}>
+        <Toaster position="top-center" reverseOrder={false} gutter={8} />
+      </Suspense>
+
       <div className="relative w-full max-w-5xl mx-5">
         <div className="flex w-full shadow-lg rounded-full bg-white">
           <input
@@ -149,7 +158,7 @@ function Searchbar() {
 
         {showSuggestions && predictions.length > 0 && (
           <ul
-            className="absolute left-0 right-0 top-full mt-1 bg-white rounded-md shadow-md z-50"
+            className="absolute left-0 right-0 top-full mt-1 bg-white rounded-md shadow-md z-50 "
             role="listbox"
           >
             {predictions.map((place, index) => (
