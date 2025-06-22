@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +15,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Weather Report",
-  description: "Weather Reporter is a real-time weather forecasting app that provides accurate current conditions, hourly updates, and 5-day forecasts using modern web technologies.",
+  description:
+    "Weather Reporter is a real-time weather forecasting app that provides accurate current conditions, hourly updates, and 5-day forecasts using modern web technologies.",
 };
 
 export default function RootLayout({
@@ -29,6 +31,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
