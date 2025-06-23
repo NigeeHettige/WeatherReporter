@@ -38,14 +38,9 @@ function Searchbar() {
   );
 
   useEffect(() => {
-    if (errorWeather) {
-      toast.error(errorWeather, { id: "weather-error" });
-
-      return;
-    }
-
-    if (errorCurrent) {
-      toast.error(errorCurrent, { id: "current-error" });
+    if (errorWeather || errorCurrent) {
+      const errorMessage = errorWeather || errorCurrent;
+      toast.error(errorMessage, { id: "weather-current-error" });
     }
   }, [errorWeather, errorCurrent]);
 

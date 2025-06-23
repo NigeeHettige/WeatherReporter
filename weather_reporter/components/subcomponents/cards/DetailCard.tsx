@@ -76,7 +76,7 @@ function DetailCard() {
         dispatch(triggerResetSearch());
         dispatch(fetchCurrentWeather(city));
         dispatch(fetchWeather(city));
-      }, 300); // 300ms debounce
+      }, 300); 
     };
   }, [dispatch, city]);
 
@@ -100,7 +100,7 @@ function DetailCard() {
                   {loadingWeather ? (
                     <DetailLoader />
                   ) : (
-                    <Suspense>
+                    <Suspense fallback={<DetailLoader />}>
                       <RefreshCcw
                         onClick={handleRefresh}
                         className="cursor-pointer hover:animate-spin"
@@ -116,6 +116,7 @@ function DetailCard() {
                   src={url_image}
                   width={40}
                   height={40}
+                  loading="lazy"
                   onError={(e) => {
                     (e.target as HTMLImageElement).src =
                       "/default-weather-icon.png";
