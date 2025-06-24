@@ -309,17 +309,18 @@ cd weather_reporter
 npm install
 
 # Set up environment variables
-cp .env.example .env.local
-# Add your API keys to .env.local
+cp .env.example .env
+# Add your API keys to .env
 
 # Run development server
 npm run dev
 
+# Run linting to check code quality
+npm run lint
+
 # Build for production
 npm run build
 
-# Start production server
-npm start
 ```
 
 ### Next.js Configuration  
