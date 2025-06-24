@@ -1,4 +1,4 @@
-import React, { Suspense, useMemo } from "react";
+import React, { Suspense, useCallback, useMemo } from "react";
 import Customicon from "../icons/Customicon";
 import Image from "next/image";
 
@@ -36,14 +36,20 @@ function DetailCard() {
     dispatch(fetchWeather(city));
   }, [city, dispatch]);
 
+  const getAmPm = useCallback((timeString: string) => {
+    const hour = new Date(`1970-01-01T${timeString}`).getHours();
+    return hour < 12 ? "AM" : "PM";
+  }, []);
+
   const text = currentweather?.current.condition.text || "Weather condition";
   const url_image = currentweather?.current.condition.icon
     ? `https:${currentweather.current.condition.icon}`
     : DefaultImage;
   const place = currentweather?.location.name;
   const country = currentweather?.location.country;
-  const updated_time = currentweather?.current.last_updated;
-  const period = currentweather?.current.is_day == 0 ? "PM" : "AM";
+  const updated_time = currentweather?.location.localtime;
+  const timeStr = currentweather?.location.localtime.split(" ")[1];
+  const period = timeStr ? getAmPm(timeStr) : undefined;
   const up_time = `${updated_time} ${period}`;
   const temperature = Math.round(currentweather?.current.temp_c || 0);
   const feel_temperature = Math.round(currentweather?.current.feelslike_c || 0);
@@ -76,7 +82,7 @@ function DetailCard() {
         dispatch(triggerResetSearch());
         dispatch(fetchCurrentWeather(city));
         dispatch(fetchWeather(city));
-      }, 300); 
+      }, 300);
     };
   }, [dispatch, city]);
 
