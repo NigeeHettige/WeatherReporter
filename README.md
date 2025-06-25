@@ -8,7 +8,7 @@ A modern, responsive weather application built with Next.js 15, featuring real-t
 
 ## 🌟 Overview
 
-WeatherReporter is a full-stack weather application that provides comprehensive weather information including current conditions, 24-hour forecasts, and 5-day predictions with interactive charts. The application features intelligent caching, location-based search, and a responsive design optimized for all devices.
+WeatherReporter is a full-stack weather application that provides comprehensive weather information including current conditions, 24-hour forecasts, and 3-day predictions with interactive charts. The application features intelligent caching, location-based search, and a responsive design optimized for all devices.
 
 ## 🏗️ System Architecture
 
@@ -82,7 +82,7 @@ graph TB
 - Horizontal scrollable interface
 - Time formatting (12-hour with AM/PM)
 
-### 4. 5-Day Forecast
+### 4. 3-Day Forecast
 - Daily min/max temperatures
 - Weather condition summaries
 - Interactive temperature trend charts
@@ -200,7 +200,7 @@ The application implements a sophisticated multi-layer caching system:
 
 - **Provider**: WeatherAPI.com (inferred from URL structure)
 - **Current Weather**: Real-time conditions
-- **Forecast**: 5-day weather predictions
+- **Forecast**: 3-day weather predictions
 - **Authentication**: API key via environment variable
 
 #### 2. Google Places API 
