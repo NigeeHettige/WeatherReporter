@@ -47,7 +47,7 @@ function Dayforecastcard() {
       <div className="bg-white shadow-lg px-6 py-8 rounded-2xl">
         <div className="mb-6">
           <h2 className="text-2xl font-semibold text-temp_gray">
-            5-Day Forecast
+            3-Day Forecast
           </h2>
         </div>
 
